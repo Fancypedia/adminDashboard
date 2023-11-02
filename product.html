@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grafik Produk</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        canvas {
+            max-width: 600px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jumlah Keseluruhan Produk: <span id="totalProducts"></span></h1>
+    <canvas id="myChart"></canvas>
+
+    <script>
+        // Mengambil data dari API menggunakan Fetch
+        fetch('https://us-central1-testlogin-366704.cloudfunctions.net/allprod')
+            .then(response => response.json())
+            .then(data => {
+                const products = data; // Data produk dari API
+
+                // Menghitung jumlah total produk
+                const totalProducts = products.length;
+
+                // Menampilkan jumlah keseluruhan produk
+                document.getElementById('totalProducts').innerText = totalProducts;
+
+                // Menghitung jumlah produk dengan stok lebih dari 0
+                const availableProducts = products.filter(product => product.stock > 0).length;
+
+                // Menggambar grafik
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Total Produk', 'Produk dengan Stok'],
+                        datasets: [{
+                            label: 'Jumlah Keseluruhan',
+                            data: [totalProducts, availableProducts],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.log('Error fetching data:', error);
+            });
+    </script>
+</body>
+</html>

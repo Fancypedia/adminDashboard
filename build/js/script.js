@@ -110,50 +110,54 @@ fetch('https://us-central1-testlogin-366704.cloudfunctions.net/allprod')
   });
 
 
-fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getaaalll')
-.then(response => response.json())
-.then(data => {
-  const labels = data.map(entry => entry.username);
-  const values = data.map(entry => entry.password.length);
-  new Chart(document.getElementById('doughnutChart'), {
-    type: 'doughnut',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          data: values,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.7)', // Warna pertama
-            'rgba(54, 162, 235, 0.7)', // Warna kedua
-            'rgba(255, 206, 86, 0.7)' // Warna ketiga
-            // ...Tambahkan warna lebih banyak jika diperlukan
-          ],
-          hoverBackgroundColor: 'lightblue', // Warna saat hover (ganti sesuai kebutuhan)
-          borderWidth: 0,
-          weight: 0.5,
+  fetch('https://asia-southeast2-annular-hexagon-401501.cloudfunctions.net/getAlluser')
+  .then(response => response.json())
+  .then(data => {
+    // Extracting usernames and their password lengths
+    const labels = data.map(entry => entry.username);
+    const values = data.map(entry => entry.password.length);
+
+    // Creating the doughnut chart
+    new Chart(document.getElementById('doughnutChart'), {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)', // Color for the first value
+              'rgba(54, 162, 235, 0.7)', // Color for the second value
+              'rgba(255, 206, 86, 0.7)' // Color for the third value
+              // Add more colors if needed
+            ],
+            hoverBackgroundColor: 'lightblue', // Color when hovering
+            borderWidth: 0,
+            weight: 0.5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+          position: 'bottom',
         },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      legend: {
-        position: 'bottom',
+        title: {
+          display: false,
+        },
+        animation: {
+          animateScale: true,
+          animateRotate: true,
+        },
       },
-      title: {
-        display: false,
-      },
-      animation: {
-        animateScale: true,
-        animateRotate: true,
-      },
-    },
+    });
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    // Error handling if needed
   });
-})
-.catch(error => {
-  console.error('Ada masalah saat mengambil data:', error);
-  // Tindakan penanganan kesalahan jika diperlukan
-});
+
 
 // Mengambil data dari API
 fetch('https://us-central1-testlogin-366704.cloudfunctions.net/getAllcommned')
