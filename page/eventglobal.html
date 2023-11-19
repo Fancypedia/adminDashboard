@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Status Chart</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+    
+        #chartContainer {
+            width: 80%;
+            max-width: 600px;
+            height: 400px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        #totalEvents {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        #eventDetails {
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        #eventDetails h2 {
+            color: #3498db;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    
+        #eventDetails div {
+            margin-bottom: 20px;
+        }
+    
+        #eventDetails p {
+            margin: 5px 0;
+        }
+    </style>
+    
+</head>
+<body>
+    <canvas id="chartContainer"></canvas>
+
+    <div id="totalEvents">
+        <!-- Total number of events will be displayed here -->
+    </div>
+
+    <div id="eventDetails">
+        <!-- Event details will be displayed here -->
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Fetch data from the API
+            fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getalleventglobal')
+                .then(response => response.json())
+                .then(apiResponse => {
+                    // Separate data based on status
+                    const trueEvents = apiResponse.data.filter(event => event.status === true);
+                    const falseEvents = apiResponse.data.filter(event => event.status === false);
+
+                    // Display the chart using Chart.js
+                    const ctx = document.getElementById('chartContainer').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['True', 'False'],
+                            datasets: [
+                                {
+                                    label: 'Number of Events (Status True)',
+                                    backgroundColor: 'green',
+                                    data: [trueEvents.length, 0] // 0 for False status
+                                },
+                                {
+                                    label: 'Number of Events (Status False)',
+                                    backgroundColor: 'red',
+                                    data: [0, falseEvents.length] // 0 for True status
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // Display total number of events
+                    const totalEventsElement = document.getElementById('totalEvents');
+                    totalEventsElement.textContent = `Total Events: ${apiResponse.data.length}`;
+
+                    // Display event details
+                    const eventDetailsElement = document.getElementById('eventDetails');
+                    eventDetailsElement.innerHTML = '<h2>Event Details</h2>';
+                    apiResponse.data.forEach(event => {
+                        eventDetailsElement.innerHTML += `
+                            <div>
+                                <p><strong>Title:</strong> ${event.title}</p>
+                                <p><strong>Description:</strong> ${event.description}</p>
+                                <p><strong>Tanggal:</strong> ${event.tanggal}</p>
+                                <p><strong>Price:</strong> ${event.harga}</p>
+                                <p><strong>Status:</strong> ${event.status ? 'True' : 'False'}</p>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

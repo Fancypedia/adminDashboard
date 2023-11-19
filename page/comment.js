@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Fungsi untuk mendapatkan data dari API
     async function getDataFromAPI() {
       try {
-        const response = await fetch('https://us-central1-testlogin-366704.cloudfunctions.net/getAllcommned');
+        const response = await fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallcomment');
         const data = await response.json();
         return data;
       } catch (error) {

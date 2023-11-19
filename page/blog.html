@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Status Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+
+        #chartContainer {
+            width: 600px;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        #blogDetails {
+            max-width: 800px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #blogDetails p {
+            margin: 5px 0;
+        }
+
+        #totalEntries {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="chartContainer"></canvas>
+
+    <div id="totalEntries">
+        <!-- Total length of blog entries will be displayed here -->
+    </div>
+
+    <div id="blogDetails">
+        <!-- Blog details will be displayed here -->
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Fetch data from the API
+            fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallblog')
+                .then(response => response.json())
+                .then(apiResponse => {
+                    const chartData = apiResponse.data.map(entry => ({
+                        title: entry.title,
+                        status: entry.status
+                    }));
+
+                    // Display total length of blog entries
+                    const totalEntriesElement = document.getElementById('totalEntries');
+                    totalEntriesElement.textContent = `Total Entries: ${chartData.length}`;
+
+                    // Separate data based on status
+                    const freeData = chartData.filter(entry => entry.status === true);
+                    const falseData = chartData.filter(entry => entry.status === false);
+
+                    // Display the chart using Chart.js
+                    const ctx = document.getElementById('chartContainer').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Free', 'False'],
+                            datasets: [
+                                {
+                                    label: 'Status',
+                                    backgroundColor: ['green', 'red'],
+                                    data: [freeData.length, falseData.length]
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: chartData.length // Adjust the max value as needed
+                                }
+                            }
+                        }
+                    });
+
+                    // Display blog details
+                    const blogDetailsElement = document.getElementById('blogDetails');
+                    blogDetailsElement.innerHTML = '<h2>Blog Details</h2>';
+                    chartData.forEach(entry => {
+                        blogDetailsElement.innerHTML += `
+                            <div>
+                                <p><strong>Title:</strong> ${entry.title}</p>
+                                <p><strong>Status:</strong> ${entry.status ? 'Free' : 'False'}</p>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

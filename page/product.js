@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const apiUrl = 'https://us-central1-testlogin-366704.cloudfunctions.net/allprod';
+    const apiUrl = 'https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallproduct';
 
     fetch(apiUrl)
         .then(response => response.json())

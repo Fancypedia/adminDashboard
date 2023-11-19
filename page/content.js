@@ -1,4 +1,4 @@
-fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/bismillahcontentall')
+fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallcontent')
   .then(response => response.json())
   .then(data => {
     // Show data in table
