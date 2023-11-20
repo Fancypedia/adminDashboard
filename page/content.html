@@ -1,48 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Data Display with Chart</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        canvas {
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        #lengthContainer {
+            margin: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            text-align: center;
+        }
+    </style>
 </head>
+<body>
+    <canvas id="statusChart"></canvas>
+    <div id="lengthContainer"></div>
 
-<body class="p-4">
-  <div class="container mx-auto">
-    <div class="text-center my-4">
-      <h1 class="text-3xl font-bold mb-2">Data Display</h1>
-      <p class="text-lg">Unique ID Counts</p>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallcontent')
+                .then(response => response.json())
+                .then(data => {
+                    // Count true and false statuses
+                    let trueCount = 0;
+                    let falseCount = 0;
 
-    <div class="grid grid-cols-2 gap-4">
-      <div class="bg-white p-4 shadow rounded-lg">
-        <h2 class="text-lg font-semibold mb-2">Data Table</h2>
-        <table class="min-w-full">
-          <thead>
-            <tr>
-              <th class="border p-2">ID</th>
-              <th class="border p-2">Content</th>
-              <th class="border p-2">Image</th>
-              <th class="border p-2">Description</th>
-            </tr>
-          </thead>
-          <tbody id="dataRows">
-            <!-- Data will be dynamically added here -->
-          </tbody>
-        </table>
-      </div>
+                    data.data.forEach(item => {
+                        if (item.status) {
+                            trueCount++;
+                        } else {
+                            falseCount++;
+                        }
+                    });
 
-      <div class="bg-white p-4 shadow rounded-lg">
-        <h2 class="text-lg font-semibold mb-2">Bar Chart</h2>
-        <div>
-          <canvas id="barChart" style="height: 400px;"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
+                    // Create a bar chart
+                    const ctx = document.getElementById('statusChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['True', 'False'],
+                            datasets: [{
+                                label: 'Content Item Status',
+                                data: [trueCount, falseCount],
+                                backgroundColor: ['#4CAF50', '#FF5733'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src=".././page/content.js"></script>
+                    // Display the length of the data
+                    const lengthContainer = document.getElementById('lengthContainer');
+                    lengthContainer.textContent = `The length of the content data is: ${data.data.length}`;
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
 </body>
-
 </html>

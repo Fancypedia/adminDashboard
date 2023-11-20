@@ -1,18 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Comment Chart</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 p-8">
-  <div class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md">
-    <h1 class="text-xl font-bold mb-4">Comment Chart</h1>
-    <div id="chart" class="mb-4"></div>
-    <p id="totalComments" class="text-center font-semibold mb-4"></p>
-  </div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src=".././page/comment.js"></script>
+        canvas {
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        #lengthContainer {
+            margin: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="statusChart"></canvas>
+    <div id="lengthContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallcomment')
+                .then(response => response.json())
+                .then(data => {
+                    // Count true and false statuses
+                    let trueCount = 0;
+                    let falseCount = 0;
+
+                    data.data.forEach(item => {
+                        if (item.status) {
+                            trueCount++;
+                        } else {
+                            falseCount++;
+                        }
+                    });
+
+                    // Create a bar chart
+                    const ctx = document.getElementById('statusChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['True', 'False'],
+                            datasets: [{
+                                label: 'Comment Item Status',
+                                data: [trueCount, falseCount],
+                                backgroundColor: ['#4CAF50', '#FF5733'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // Display the length of the data
+                    const lengthContainer = document.getElementById('lengthContainer');
+                    lengthContainer.textContent = `The length of the comment data is: ${data.data.length}`;
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
 </body>
 </html>
