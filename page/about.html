@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch API Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+
+        #statusChart {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #lengthInfo {
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="statusChart" width="400" height="200"></canvas>
+<div id="lengthInfo" onclick="showLength()">Array Length: 0</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Fetch data from the API
+        fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallabout')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    console.log('Success:', data.message);
+                    processTrueData(data.data);
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    function processTrueData(data) {
+        // Count true and false status
+        let trueCount = 0;
+        let falseCount = 0;
+
+        data.forEach(item => {
+            if (item.status === true) {
+                trueCount++;
+            } else {
+                falseCount++;
+            }
+        });
+
+        console.log('True Count:', trueCount);
+        console.log('False Count:', falseCount);
+
+        // Display length information
+        updateLengthInfo(data.length);
+
+        // Draw chart
+        drawChart(trueCount, falseCount);
+    }
+
+    function updateLengthInfo(length) {
+        document.getElementById('lengthInfo').innerText = 'Array Length: ' + length;
+    }
+
+    function drawChart(trueCount, falseCount) {
+        var ctx = document.getElementById('statusChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['True', 'False'],
+                datasets: [{
+                    label: 'Status',
+                    data: [trueCount, falseCount],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function showLength() {
+        alert('Array Length: ' + data.length);
+    }
+</script>
+
+</body>
+</html>
