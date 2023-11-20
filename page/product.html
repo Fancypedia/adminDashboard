@@ -18,7 +18,7 @@
         }
 
         canvas {
-            max-width: 600px;
+            max-width: 800px;
             margin-bottom: 20px;
         }
 
@@ -32,11 +32,43 @@
             max-width: 400px;
             text-align: center;
         }
+
+        #productTable {
+            width: 80%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        #productTable th, #productTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #productTable th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
     <canvas id="statusChart"></canvas>
     <div id="lengthContainer"></div>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nomor ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Size</th>
+                <th>Image</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -48,7 +80,41 @@
                     let trueCount = 0;
                     let falseCount = 0;
 
+                    // Create table rows
+                    const tableBody = document.querySelector('#productTable tbody');
                     data.data.forEach(item => {
+                        const row = document.createElement('tr');
+                        const idCell = document.createElement('td');
+                        idCell.textContent = item.ID;
+                        const nomorIdCell = document.createElement('td');
+                        nomorIdCell.textContent = item.nomorid;
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = item.name;
+                        const descriptionCell = document.createElement('td');
+                        descriptionCell.textContent = item.description;
+                        const priceCell = document.createElement('td');
+                        priceCell.textContent = item.price;
+                        const stockCell = document.createElement('td');
+                        stockCell.textContent = item.stock;
+                        const sizeCell = document.createElement('td');
+                        sizeCell.textContent = item.size;
+                        const imageCell = document.createElement('td');
+                        imageCell.textContent = item.image;
+                        const statusCell = document.createElement('td');
+                        statusCell.textContent = item.status ? 'True' : 'False';
+
+                        row.appendChild(idCell);
+                        row.appendChild(nomorIdCell);
+                        row.appendChild(nameCell);
+                        row.appendChild(descriptionCell);
+                        row.appendChild(priceCell);
+                        row.appendChild(stockCell);
+                        row.appendChild(sizeCell);
+                        row.appendChild(imageCell);
+                        row.appendChild(statusCell);
+
+                        tableBody.appendChild(row);
+
                         if (item.status) {
                             trueCount++;
                         } else {
@@ -56,23 +122,37 @@
                         }
                     });
 
-                    // Create a bar chart
+                    // Create a line chart with two lines for "True" and "False" statuses
                     const ctx = document.getElementById('statusChart').getContext('2d');
                     const chart = new Chart(ctx, {
-                        type: 'bar',
+                        type: 'line',
                         data: {
-                            labels: ['True', 'False'],
-                            datasets: [{
-                                label: 'Product Item Status',
-                                data: [trueCount, falseCount],
-                                backgroundColor: ['#4CAF50', '#FF5733'],
-                                borderWidth: 1
-                            }]
+                            labels: data.data.map(item => item.ID),
+                            datasets: [
+                                {
+                                    label: 'True',
+                                    data: data.data.map(item => item.price),
+                                    fill: true,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'False',
+                                    data: data.data.map(item => item.stock), // Adjust the dataset based on your API response
+                                    fill: true,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                }
+                            ]
                         },
                         options: {
                             scales: {
                                 y: {
-                                    beginAtZero: true
+                                    beginAtZero: true,
+                                    // You may need to adjust the max value based on your data
+                                    // max: Math.max(...data.data.map(item => item.price, item.stock)) + 1
                                 }
                             }
                         }
