@@ -1,118 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Status Chart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f4f4f4;
-        }
+    <!DOCTYPE html>
+    <html lang="en">
 
-        #chartContainer {
-            width: 600px;
-            height: 400px;
-            margin-bottom: 20px;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Blog Status Chart</title>
+        <!-- Include Tailwind CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <!-- Include Chart.js library -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+            }
 
-        #blogDetails {
-            max-width: 800px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+            .navbar {
+                background-color: #1E40AF;
+                color: #ffffff;
+            }
 
-        #blogDetails p {
-            margin: 5px 0;
-        }
+            #totalEntries {
+                background-color: #1E40AF;
+                color: #ffffff;
+            }
 
-        #totalEntries {
-            background-color: #3498db;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="chartContainer"></canvas>
+            #blogDetails {
+                background-color: #ffffff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+    </head>
 
-    <div id="totalEntries">
-        <!-- Total length of blog entries will be displayed here -->
-    </div>
+    <body class="font-sans bg-gray-100">
+        <!-- Navbar -->
+        <nav class="bg-gray-700 p-4 mb-4 flex justify-around">
+            <a href="#" class="text-white hover:underline">Home</a>
+            <a href="#" class="text-white hover:underline">Products</a>
+            <a href="#" class="text-white hover:underline">Contact</a>
+            <a href="../index.html" class="text-white hover:underline">Back</a>
+        </nav>
 
-    <div id="blogDetails">
-        <!-- Blog details will be displayed here -->
-    </div>
+        <div class="container mx-auto">
+            <canvas id="chartContainer" class="w-full max-w-md mx-auto"></canvas>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Fetch data from the API
-            fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallblog')
-                .then(response => response.json())
-                .then(apiResponse => {
-                    const chartData = apiResponse.data.map(entry => ({
-                        title: entry.title,
-                        status: entry.status
-                    }));
+            <div id="totalEntries" class="p-4 rounded mb-8">
+                <!-- Total length of blog entries will be displayed here -->
+            </div>
 
-                    // Display total length of blog entries
-                    const totalEntriesElement = document.getElementById('totalEntries');
-                    totalEntriesElement.textContent = `Total Entries: ${chartData.length}`;
+        </div>
 
-                    // Separate data based on status
-                    const freeData = chartData.filter(entry => entry.status === true);
-                    const falseData = chartData.filter(entry => entry.status === false);
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Fetch data from the API
+                fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallblog')
+                    .then(response => response.json())
+                    .then(apiResponse => {
+                        const chartData = apiResponse.data.map(entry => ({
+                            title: entry.title,
+                            status: entry.status
+                        }));
 
-                    // Display the chart using Chart.js
-                    const ctx = document.getElementById('chartContainer').getContext('2d');
-                    const chart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Free', 'False'],
-                            datasets: [
-                                {
+                        // Display total length of blog entries
+                        const totalEntriesElement = document.getElementById('totalEntries');
+                        totalEntriesElement.textContent = `Total Entries: ${chartData.length}`;
+
+                        // Separate data based on status
+                        const freeData = chartData.filter(entry => entry.status === true);
+                        const falseData = chartData.filter(entry => entry.status === false);
+
+                        // Display the chart using Chart.js
+                        const ctx = document.getElementById('chartContainer').getContext('2d');
+                        const chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Free', 'False'],
+                                datasets: [{
                                     label: 'Status',
                                     backgroundColor: ['green', 'red'],
                                     data: [freeData.length, falseData.length]
-                                }
-                            ]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: chartData.length // Adjust the max value as needed
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: chartData.length // Adjust the max value as needed
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
 
-                    // Display blog details
-                    const blogDetailsElement = document.getElementById('blogDetails');
-                    blogDetailsElement.innerHTML = '<h2>Blog Details</h2>';
-                    chartData.forEach(entry => {
-                        blogDetailsElement.innerHTML += `
-                            <div>
-                                <p><strong>Title:</strong> ${entry.title}</p>
-                                <p><strong>Status:</strong> ${entry.status ? 'Free' : 'False'}</p>
-                            </div>
-                        `;
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        });
-    </script>
+                        // Display blog details
+                        const blogDetailsElement = document.getElementById('blogDetails');
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            });
+        </script>
+    </body>
 
-    <!-- Include Chart.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</body>
-</html>
+    </html>
