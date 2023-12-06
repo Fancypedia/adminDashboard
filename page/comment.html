@@ -1,44 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comment App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        canvas {
-            max-width: 600px;
-            margin-bottom: 20px;
-        }
-
-        #lengthContainer {
-            margin: 20px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            text-align: center;
-        }
-    </style>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <canvas id="statusChart"></canvas>
-    <div id="lengthContainer"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<body class="bg-gray-100 min-h-screen font-sans">
+    <!-- Navbar -->
+    <nav class="bg-gray-700 p-4 mb-4 flex justify-around">
+        <a href="#" class="text-white hover:underline">Home</a>
+        <a href="#" class="text-white hover:underline">Products</a>
+        <a href="#" class="text-white hover:underline">Contact</a>
+        <a href="../index.html" class="text-white hover:underline">Back</a>
+    </nav>
+    <!-- Main Content -->
+    <div class="container mx-auto">
+        <div class="bg-white p-8 rounded shadow-lg max-w-2xl mx-auto mb-8">
+            <canvas id="statusChart" class="w-full h-48 mb-4"></canvas>
+            <div id="lengthContainer" class="text-lg text-center"></div>
+        </div>
+    </div>
+
+    <!-- Include Tailwind version of Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallcomment')
@@ -80,10 +68,11 @@
 
                     // Display the length of the data
                     const lengthContainer = document.getElementById('lengthContainer');
-                    lengthContainer.textContent = `The length of the comment data is: ${data.data.length}`;
+                    lengthContainer.textContent = `Total Comments: ${data.data.length}`;
                 })
                 .catch(error => console.error('Error fetching data:', error));
         });
     </script>
 </body>
+
 </html>

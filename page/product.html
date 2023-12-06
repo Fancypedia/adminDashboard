@@ -4,23 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 
-        canvas {
-            max-width: 800px;
-            margin-bottom: 20px;
-        }
+    <style>
+        /* You can keep your custom styles here */
+        #statusChart {
+        max-width: 1000px; /* Set a higher value for the max-width */
+        width: 100%; /* Make the chart take the full width */
+        margin-bottom: 20px;
+    }
 
         #lengthContainer {
             margin: 20px;
@@ -36,7 +28,6 @@
         #productTable {
             width: 80%;
             margin-top: 20px;
-            border-collapse: collapse;
         }
 
         #productTable th, #productTable td {
@@ -50,10 +41,21 @@
         }
     </style>
 </head>
-<body>
-    <canvas id="statusChart"></canvas>
-    <div id="lengthContainer"></div>
-    <table id="productTable">
+<body class="bg-gray-200">
+    <header class="bg-gray-800 text-white p-4 text-center">
+        <h1 class="text-2xl">Product App</h1>
+    </header>
+    <nav class="bg-gray-700 p-4 mb-4 flex justify-around">
+        <a href="#" class="text-white hover:underline">Home</a>
+        <a href="#" class="text-white hover:underline">Products</a>
+        <a href="#" class="text-white hover:underline">Contact</a>
+        <a href="../index.html" class="text-white hover:underline">Back</a>
+    </nav>
+
+    <canvas id="statusChart" class="mx-auto"></canvas>
+    <div id="lengthContainer" class="mx-auto"></div>
+    <table id="productTable" class="mx-auto">
+
         <thead>
             <tr>
                 <th>ID</th>
