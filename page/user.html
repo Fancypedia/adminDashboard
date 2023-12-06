@@ -5,12 +5,95 @@
   <title>Username Counts Chart</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 p-8">
-  <div class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md">
+<body class="bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 text-white p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="#" class="text-lg font-bold">Your App Name</a>
+      <ul class="flex space-x-4">
+        <li><a href="#" class="hover:underline">Home</a></li>
+        <li><a href="#" class="hover:underline">About</a></li>
+        <li><a href="#" class="hover:underline">Contact</a></li>
+        <a href="../index.html" class="text-white hover:underline">Back</a>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="container mx-auto mt-8 bg-white p-6 rounded-md shadow-md">
     <canvas id="barChart" width="600" height="400"></canvas>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
-  <script src=".././page/script.js"></script>
+  <script>
+    fetch('https://asia-southeast2-annular-hexagon-401501.cloudfunctions.net/getAlluser')
+      .then(response => response.json())
+      .then(data => {
+        const usernameCounts = data.reduce((count, { username }) => {
+          count[username] = (count[username] || 0) + 1;
+          return count;
+        }, {});
+
+        const labels = Object.keys(usernameCounts);
+        const counts = Object.values(usernameCounts);
+
+        // Hitung jumlah keseluruhan
+        const totalUsers = counts.reduce((total, count) => total + count, 0);
+
+        // Menambahkan persentase dari total keseluruhan
+        const percentages = counts.map(count => ((count / totalUsers) * 100).toFixed(2) + '%');
+
+        const barChartData = {
+          labels: labels.concat(['Total']),
+          datasets: [
+            {
+              label: 'Username Counts',
+              data: counts.concat([totalUsers]),
+              backgroundColor: [
+                'rgba(54, 162, 235, 0.7)', // Warna batang
+              ],
+            },
+          ],
+        };
+
+        // Menampilkan grafik
+        const barChartContext = document.getElementById('barChart').getContext('2d');
+        new Chart(barChartContext, {
+          type: 'bar',
+          data: barChartData,
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              legend: {
+                display: false, // Menyembunyikan legenda karena hanya satu data
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context) => {
+                    if (context.parsed.y !== totalUsers) {
+                      return `Users: ${context.parsed.y} (${percentages[context.dataIndex]})`;
+                    } else {
+                      return `Total Users: ${context.parsed.y}`;
+                    }
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        // Tangani error di sini
+      });
+  </script>
 </body>
 </html>

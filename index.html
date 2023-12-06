@@ -187,7 +187,7 @@
                       </div>
                     </div>
                     <div class="preview-item-content">
-                      <p class="preview-subject ellipsis mb-1">Software Testing</p>
+                      <p class="preview-subject ellipsis mb-1">Softwaare Testing</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
@@ -283,8 +283,9 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                        </div>
+                        <div class="d-flex align-items-center align-self-start" id="userInfo">
+                          <p id="userCount">Jumlah Pengguna: Loading...</p>
+                        </div>                        
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-danger">
@@ -463,6 +464,33 @@
       }
     })
     .catch(error => console.error('Error fetching data:', error));
+</script>
+<script>
+  // Fungsi untuk mengambil dan memproses data pengguna dari API
+  function fetchUserDataFromAPI() {
+    fetch('https://asia-southeast2-annular-hexagon-401501.cloudfunctions.net/getAlluser')
+      .then(response => response.json())
+      .then(data => {
+        // Mengakses array pengguna dari respons
+        const userArray = data;
+
+        // Jumlah pengguna dalam array
+        const userCount = userArray.length;
+
+        // Menampilkan jumlah pengguna di dalam elemen HTML
+        document.getElementById('userCount').innerText = `Jumlah Pengguna: ${userCount}`;
+
+        // Lakukan hal-hal lain dengan data pengguna jika diperlukan
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Menampilkan pesan kesalahan jika terjadi error
+        document.getElementById('userCount').innerText = 'Error: Gagal mengambil data pengguna dari API';
+      });
+  }
+
+  // Panggil fungsi fetchUserDataFromAPI saat halaman dimuat
+  fetchUserDataFromAPI();
 </script>
        <script src="assets/vendors/chart.js/Chart.min.js"></script>
     <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
