@@ -405,9 +405,10 @@
       </script>
 <script>
   // Fetch data from the API
-  fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getallcomment')
+  fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getall-comment')
     .then(response => response.json())
     .then(data => {
+      console.log(data,"data.data");
       if (data.status && data.data) {
         // Display the response in the console
         console.log('API Response:', data);
@@ -468,12 +469,12 @@
 <script>
   // Fungsi untuk mengambil dan memproses data pengguna dari API
   function fetchUserDataFromAPI() {
-    fetch('https://asia-southeast2-annular-hexagon-401501.cloudfunctions.net/getAlluser')
+    fetch('https://asia-southeast2-testlogin-366704.cloudfunctions.net/getall-user')
       .then(response => response.json())
       .then(data => {
         // Mengakses array pengguna dari respons
-        const userArray = data;
-
+        const userArray = data.data;
+console.log(userArray);
         // Jumlah pengguna dalam array
         const userCount = userArray.length;
 
